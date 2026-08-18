@@ -1,0 +1,9 @@
+{
+  "name": "FAM-GUARD - Smart Grain Storage Companion",
+  "description": "IoT-enabled smart grain storage monitoring and adaptive ventilation companion app for small-holder farmers and rural households.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "notifications"
+  ]
+}

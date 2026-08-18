@@ -1,0 +1,82 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* FAM-GUARD Brand Palette */
+  --color-brand-forest: #1B3A2E;
+  --color-brand-leaf: #2F6F4E;
+  --color-brand-grain: #C87A2A;
+  --color-brand-amber: #E8A33D;
+  --color-brand-cream: #FAF6EE;
+
+  /* Risk classification */
+  --color-risk-safe: #16A34A;
+  --color-risk-check: #F59E0B;
+  --color-risk-action: #DC2626;
+}
+
+@layer base {
+  body {
+    @apply bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100 antialiased transition-colors duration-300;
+    font-feature-settings: "ss01", "cv01";
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-[var(--color-brand-leaf)] outline-offset-2;
+  }
+}
+
+@layer components {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 1rem);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .input-field {
+    @apply w-full p-4 bg-white dark:bg-stone-900 border-2 border-stone-300 dark:border-stone-700 rounded-2xl font-bold text-stone-900 dark:text-white placeholder:text-stone-500 outline-none focus:border-[var(--color-brand-leaf)] dark:focus:border-[var(--color-brand-leaf)] transition-all shadow-sm;
+  }
+
+  .btn-primary {
+    @apply bg-[var(--color-brand-forest)] hover:bg-[var(--color-brand-leaf)] text-white font-bold py-4 px-6 rounded-2xl
+           shadow-lg shadow-emerald-900/20 dark:shadow-none active:scale-95 transition-all
+           disabled:opacity-50 disabled:cursor-not-allowed text-center;
+  }
+
+  .btn-accent {
+    @apply bg-[var(--color-brand-grain)] hover:bg-[var(--color-brand-amber)] text-white font-bold py-4 px-6 rounded-2xl
+           shadow-lg shadow-amber-200 dark:shadow-none active:scale-95 transition-all
+           disabled:opacity-50 disabled:cursor-not-allowed text-center;
+  }
+
+  .card {
+    @apply bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-[2rem] shadow-sm;
+  }
+
+  /* Risk pill helpers */
+  .pill-safe {
+    @apply bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800;
+  }
+  .pill-check {
+    @apply bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800;
+  }
+  .pill-action {
+    @apply bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800;
+  }
+
+  .pulse-ring {
+    @apply absolute inset-0 rounded-full animate-ping;
+  }
+}

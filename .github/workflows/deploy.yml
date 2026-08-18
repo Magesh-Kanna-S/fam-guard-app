@@ -1,0 +1,79 @@
+# FAM-GUARD — Build & Deploy to GitHub Pages
+# Builds the Vite app on every push to main/master and publishes the static
+# output to GitHub Pages automatically.
+#
+# SETUP NEEDED (one-time):
+#   1. Push this repo to GitHub.
+#   2. In repo Settings → Pages → Build and deployment → Source, choose
+#      "GitHub Actions".
+#   3. Push to main. The workflow runs and your site goes live at:
+#        https://<your-username>.github.io/<repo-name>/
+#
+name: Deploy FAM-GUARD to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        # Use `npm install` (not `npm ci`) so a missing/updated lockfile
+        # doesn't break the build. Safe for prototype deployments.
+        run: npm install
+
+      - name: Build (Vite)
+        run: npm run build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Add SPA 404 fallback (copy index.html → 404.html)
+        # Overwrites the public/404.html placeholder with the real built
+        # index.html so deep links render the app instead of GitHub's 404.
+        run: cp dist/index.html dist/404.html
+
+      - name: Ensure .nojekyll is present
+        run: touch dist/.nojekyll
+
+      - name: List build output
+        run: ls -la dist/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
